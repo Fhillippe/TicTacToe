@@ -1,0 +1,37 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+html {
+  height: 100%;
+}
+body {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: blue;
+}
+button {
+  font-size: x-large;
+}
+#board {
+  column-gap: 0.5rem;
+  row-gap: 0.5rem;
+  height: 50vw;
+  width: 50vw;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  background-color: black;
+}
+.board {
+  border-radius: 0;
+  border: none;
+  background-color: white;
+}
+.board:hover {
+  border: 3px solid blue;
+}
+.x {
+  background-color: red;
+}
