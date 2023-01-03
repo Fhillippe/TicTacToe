@@ -1,30 +1,44 @@
 const boardDom = document.querySelector("#board");
-const findGameButton = document.querySelector("button");
+const nameInput = document.querySelector("#nameInputField");
+const nameSubmit = document.querySelector("#namSubmit");
 const socket = io();
+let symbol,
+  inRoom = false;
 
-socket.on("render", (board) => {
-  console.log(board);
-  board.forEach((element, i) => {
-    const tile = document.querySelector(`.p${i}`);
-    const isOn = tile.classList.contains("x");
-    if (Boolean(element) !== isOn) {
-      tile.classList.toggle("x");
-    }
-  });
-});
-
-socket.on("joinRoom", (game) => {});
-
-socket.on("newRoom", () => {});
-
-findGameButton.addEventListener("click", () => {
-  socket.emit("lookingForGame");
-  findGameButton.hidden = true;
-  boardDom.style.display = "grid";
-});
-
-board.addEventListener("click", (event) => {
-  if (event.target.tagName === "BUTTON") {
-    socket.emit("change", event.target.classList[1][1]);
+nameSubmit.addEventListener("click", () => {
+  const name = nameInput.value;
+  if (name) {
+    socket.emit("setName", name);
+    helpers.displayName(name);
+  } else {
+    helpers.outputMessage("Empty name.");
   }
 });
+
+socket.on("renderOverview", (overview) => {
+  if (!inRoom) {
+    helpers.renderOverwiev(overview);
+  }
+});
+
+socket.on("welcome", (overview) => {
+  console.log(inRoom);
+  if (!inRoom) {
+    helpers.outputMessage("Hello, please choose your name.");
+    helpers.socket = socket;
+    helpers.renderOverwiev(overview);
+  }
+});
+
+socket.on("enterRoom", (roomId) => {
+  inRoom = true;
+  helpers.clearOverview();
+  const game = new Game(socket, boardDom, roomId);
+  game.enterRoom();
+});
+
+socket.on("message", ({ msg, author }) => {
+  helpers.outputMessage(msg, author);
+});
+
+socket.on("startGame", () => {});

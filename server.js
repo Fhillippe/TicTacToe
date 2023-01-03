@@ -2,18 +2,10 @@ const express = require("express");
 const http = require("http");
 const morgan = require("morgan");
 const socketIo = require("socket.io");
-const {
-  getRooms,
-  getBoard,
-  changeBoard,
-  findGame,
-  joinRoom,
-  createRoom,
-  removePlayer,
-} = require("./utils/rooms");
+const Rooms = require("./utils/rooms");
+const Player = require("./utils/player");
 
 const PORT = 3000;
-
 const app = express();
 const server = http.createServer(app);
 io = socketIo(server);
@@ -22,30 +14,18 @@ app.use(morgan("dev"));
 app.use(express.static("public"));
 
 io.on("connection", (socket) => {
-  let gameOn = false,
-    host = false,
-    gameId;
-  socket.on("change", (index) => {
-    changeBoard(gameId, index);
-    io.in(gameId).emit("render", getBoard(gameId));
+  const rooms = new Rooms(socket);
+  const player = new Player(socket.id);
+  socket.emit("welcome", rooms.overview);
+  socket.on("joinRoom", (roomId) => {
+    rooms.joinRoom(roomId, player);
   });
-  socket.on("lookingForGame", () => {
-    const roomToJoin = findGame();
-    gameOn = true;
-    if (roomToJoin !== false) {
-      gameId = roomToJoin;
-      joinRoom(roomToJoin, socket.id);
-      socket.emit("joinRoom", roomToJoin);
-    } else {
-      host = true;
-      gameId = createRoom(socket.id);
-      socket.emit("newRoom");
-    }
-    socket.join(gameId);
+  socket.on("setName", (name) => {
+    player.name = name;
   });
   socket.on("disconnect", () => {
-    if (gameOn) {
-      removePlayer(socket.id, host);
+    if (player.roomId) {
+      rooms.removePlayer(player.roomId, player.id);
     }
   });
 });

@@ -6,18 +6,16 @@
     <link href="css/styles.css" rel="stylesheet" />
   </head>
   <body>
-    <button>Find game !!!!!!</button>
-    <div id="board" style="display: none">
-      <button class="board p0"></button>
-      <button class="board p1"></button>
-      <button class="board p2"></button>
-      <button class="board p3"></button>
-      <button class="board p4"></button>
-      <button class="board p5"></button>
-      <button class="board p6"></button>
-      <button class="board p7"></button>
-      <button class="board p8"></button>
+    <div id="nameBox">
+      <p>Set your name</p>
+      <input id="nameInputField" type="text" maxlength="20" />
+      <input id="namSubmit" type="submit" />
     </div>
+    <div id="board" style="display: none"></div>
+    <div id="overview"></div>
+    <div id="messageBox"></div>
+    <script src="./js/utils/helpers.js"></script>
+    <script src="./js/game/game.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="./js/index.js"></script>
   </body>

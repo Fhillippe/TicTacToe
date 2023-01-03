@@ -6,32 +6,82 @@ html {
   height: 100%;
 }
 body {
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: blue;
-}
-button {
-  font-size: x-large;
+  box-sizing: border-box;
+  height: 100vh;
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+  grid-template: 2fr 1fr/ 1fr 2fr 1fr;
+  background-image: linear-gradient(
+    to right,
+    rgb(32, 32, 248),
+    rgb(46, 223, 46)
+  );
 }
 #board {
+  grid-column-start: 2;
   column-gap: 0.5rem;
   row-gap: 0.5rem;
-  height: 50vw;
-  width: 50vw;
   display: grid;
   grid-template: repeat(3, 1fr) / repeat(3, 1fr);
-  background-color: black;
 }
-.board {
-  border-radius: 0;
-  border: none;
+#overview {
+  display: grid;
+  grid-template: repeat(4, 1fr) / repeat(4, 1fr);
+  grid-column-start: 2;
+}
+.roomTile {
+  background-color: white;
+  margin: 1rem;
+  text-align: center;
+}
+.roomTile:hover {
+  border: 3px solid black;
+}
+.roomTile:active {
+  border: 5px solid black;
+  background-color: lightskyblue;
+}
+.boardTile {
   background-color: white;
 }
-.board:hover {
+.active:hover {
   border: 3px solid blue;
 }
-.x {
-  background-color: red;
+.cross,
+.circle {
+  background-size: 50%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.cross {
+  background-image: url("../svg/cross.svg");
+}
+.circle {
+  background-image: url("../svg/circle.svg");
+}
+#messageBox {
+  grid-column-start: 2;
+  grid-row-start: 2;
+  background-color: white;
+  overflow: scroll;
+}
+#nameBox {
+  margin: auto;
+}
+
+@media only screen and (max-width: 1050px) {
+  body {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 2fr 1fr;
+  }
+  #board,
+  #overview {
+    grid-column-start: 1;
+    grid-row-start: 2;
+  }
+  #messageBox {
+    grid-column-start: 1;
+    grid-row-start: 3;
+  }
 }
