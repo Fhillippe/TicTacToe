@@ -1,12 +1,11 @@
 class Room {
-  constructor() {
+  constructor(id) {
     this._players = [];
-    this._board = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-    this._turn = "circle";
     this._gameOn = false;
+    this._id = id;
   }
-  get board() {
-    return this._board;
+  get id() {
+    return this._id;
   }
   get turn() {
     return this._turn;
@@ -14,27 +13,22 @@ class Room {
   get players() {
     return this._players;
   }
+  get isFull() {
+    return this.players.length === 2;
+  }
   set players(players) {
     this._players = players;
   }
   switchGame() {
     this._gameOn = !this._gameOn;
   }
-  changeTurn() {
-    this._turn = this._turn === "circle" ? "cross" : "circle";
-  }
-  addPlayer({ playerName, playerId }) {
-    this._players.push({ playerName, playerId });
+  addPlayer(player) {
+    this._players.push(player);
   }
   removePlayer(playerId) {
     this.players = this.players.filter((player) => {
-      player.playerId = playerId;
+      return player.id !== playerId;
     });
-  }
-  changeBoard(index, symbol) {
-    if (this._turn !== symbol) return;
-    this._board[index] = symbol;
-    this.changeTurn(room);
   }
 }
 

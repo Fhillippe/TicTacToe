@@ -1,9 +1,13 @@
 class Player {
-  constructor(id) {
-    this._id = id;
+  constructor(socket) {
+    this._id = socket.id;
     this._symbol = "";
     this._room = "";
     this._name = "";
+    this._socket = socket;
+  }
+  get socket() {
+    return this._socket;
   }
   get id() {
     return this._id;

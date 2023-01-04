@@ -4,21 +4,33 @@ const morgan = require("morgan");
 const socketIo = require("socket.io");
 const Rooms = require("./utils/rooms");
 const Player = require("./utils/player");
+const Game = require("./utils/game");
 
 const PORT = 3000;
 const app = express();
 const server = http.createServer(app);
 io = socketIo(server);
 
+const rooms = new Rooms();
+
 app.use(morgan("dev"));
 app.use(express.static("public"));
 
 io.on("connection", (socket) => {
-  const rooms = new Rooms(socket);
-  const player = new Player(socket.id);
+  const player = new Player(socket);
   socket.emit("welcome", rooms.overview);
   socket.on("joinRoom", (roomId) => {
-    rooms.joinRoom(roomId, player);
+    if (!player.name) {
+      socket.emit("message", { msg: "You need name to join room." });
+      return;
+    }
+    rooms.addPlayerToRoom(roomId, player);
+    socket.emit("enterRoom", roomId);
+    io.emit("renderOverview", rooms.overview);
+    if (rooms.getRoom(roomId).isFull) {
+      const game = new Game(rooms.getRoom(roomId), io, socket);
+      game.on();
+    }
   });
   socket.on("setName", (name) => {
     player.name = name;
@@ -26,6 +38,7 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     if (player.roomId) {
       rooms.removePlayer(player.roomId, player.id);
+      socket.leave(player.roomId);
     }
   });
 });

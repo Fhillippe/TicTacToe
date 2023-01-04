@@ -2,8 +2,8 @@ const bot = "Usefull bot";
 const helpers = {
   socket: "",
   overviewDom: document.querySelector("#overview"),
-  clearOverview() {
-    this.clearElement(this.overviewDom);
+  hideOverview() {
+    this.overviewDom.style.display = "none";
   },
   displayName(name) {
     const nameBox = document.querySelector("#nameBox");
@@ -34,9 +34,13 @@ const helpers = {
   creatRoomTiles(overview) {
     const tiles = [];
     overview.forEach((room) => {
-      const numberOfPlayers = room.players.length;
+      const numberOfPlayers = room.players;
       if (numberOfPlayers !== 2) {
-        const id = this.createDomElement("p", ["roomTileId"], [room.roomId]);
+        const id = this.createDomElement(
+          "p",
+          ["roomTileId"],
+          ["Room: ", room.roomId]
+        );
         const players = this.createDomElement(
           "p",
           ["roomTileAmountOfPlayers"],
@@ -58,7 +62,9 @@ const helpers = {
   },
   handleJoinRoom(e) {
     if (e.target.classList.contains("roomTile")) {
-      const roomId = e.target.querySelector(".roomTileId").innerHTML;
+      const roomId = e.target
+        .querySelector(".roomTileId")
+        .innerHTML.match(/\d/)[0];
       this.socket.emit("joinRoom", roomId);
     }
   },
@@ -66,6 +72,12 @@ const helpers = {
     this.clearElement(this.overviewDom);
     const tiles = this.creatRoomTiles(overview);
     this.addTilesTo(this.overviewDom, tiles);
+  },
+  getGameOpenMsg(symbol) {
+    const firstHalf = `You are playing with ${symbol}, `;
+    const secondHalf =
+      symbol === "circle" ? "begin." : "wait for cirlce to move.";
+    return firstHalf + secondHalf;
   },
 };
 

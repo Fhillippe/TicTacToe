@@ -4,6 +4,7 @@
 }
 html {
   height: 100%;
+  font-family: Arial, Helvetica, sans-serif;
 }
 body {
   box-sizing: border-box;
@@ -74,6 +75,8 @@ body {
   body {
     grid-template-columns: 1fr;
     grid-template-rows: 1fr 2fr 1fr;
+    margin-left: 10%;
+    margin-right: 10%;
   }
   #board,
   #overview {
@@ -83,5 +86,11 @@ body {
   #messageBox {
     grid-column-start: 1;
     grid-row-start: 3;
+  }
+}
+@media only screen and (max-width: 500px) {
+  body {
+    margin-left: 0;
+    margin-right: 0;
   }
 }
