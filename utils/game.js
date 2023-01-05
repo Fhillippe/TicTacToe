@@ -1,18 +1,15 @@
 class Game {
-  constructor(room, io, socket) {
+  constructor(room, io) {
     this._room = room;
     this._playerCircle = "";
     this._playerCross = "";
-    this._turn = "cirle";
+    this._turn = "Circle";
     this._io = io;
-    this._socket = socket;
     this._board = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+    this._sockets = [];
   }
   get board() {
     return this._board;
-  }
-  get socket() {
-    return this._socket;
   }
   get io() {
     return this._io;
@@ -29,42 +26,107 @@ class Game {
   get playerCross() {
     return this._playerCross;
   }
-  set playerCircle(player) {
-    this._playerCircle = player;
+  get sockets() {
+    return this._sockets;
+  }
+  set sockets(newSockets) {
+    this._sockets = newSockets;
+  }
+  set board(newBoard) {
+    this._board = newBoard;
+  }
+  set turn(newSymbol) {
+    this._turn = newSymbol;
+  }
+  set playerCircle(newPlayer) {
+    this._playerCircle = newPlayer;
   }
   set playerCross(player) {
     this._playerCross = player;
   }
-  toggleTurn() {
-    if (this.turn === "circle") {
-      this.turn = "cross";
+  changeTile(index) {
+    this.board[index] = this._turn;
+    const sendTo = this.turn === "Circle" ? "Cross" : "Circle";
+    this["player" + sendTo].socket.emit("updateBoard", index);
+  }
+  changeTurn() {
+    if (this.turn === "Circle") {
+      this.turn = "Cross";
       this.playerCross.socket.emit("toggleTurn");
     } else {
-      this.turn = "cross";
+      this.turn = "Circle";
       this.playerCircle.socket.emit("toggleTurn");
     }
   }
   coinFlip() {
     return Math.random() < 0.5;
   }
-  shuffleSymbols() {
+  setPlayers(result) {
+    this.playerCircle = this.room.players[Number(result)];
+    this.playerCross = this.room.players[Number(!result)];
+  }
+  setSockets() {
+    this.sockets = [this.playerCircle.socket, this.playerCross.socket];
+  }
+  shufflePlayersToSymbols() {
     const flipResult = this.coinFlip();
-    this.playerCircle = this.room.players[Number(flipResult)];
-    this.playerCross = this.room.players[Number(!flipResult)];
-    this.playerCircle.socket.emit("startGame", "circle");
-    this.playerCross.socket.emit("startGame", "cross");
+    this.setPlayers(flipResult);
+    this.setSockets();
+    this.playerCircle.socket.emit("startGame", "Circle");
+    this.playerCross.socket.emit("startGame", "Cross");
+  }
+  restartGame() {
+    this.io.in(String(this.room.id)).emit("restartGame");
+    this.board = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+  }
+  allowChat() {
+    this.io.in(String(this.room.id)).emit("allowChat");
+  }
+  checkWinCon() {
+    const row1 = new Set(this.board.slice(0, 2));
+    const row2 = new Set(this.board.slice(3, 5));
+    const row3 = new Set(this.board.slice(6, 8));
+    const column1 = new Set([this.board[0], this.board[3], this.board[6]]);
+    const column2 = new Set([this.board[1], this.board[4], this.board[7]]);
+    const column3 = new Set([this.board[2], this.board[5], this.board[8]]);
+    const cross1 = new Set([this.board[0], this.board[4], this.board[8]]);
+    const cross2 = new Set([this.board[2], this.board[4], this.board[6]]);
+    const win = [
+      row1,
+      row2,
+      row3,
+      column1,
+      column2,
+      column3,
+      cross1,
+      cross2,
+    ].find((set) => {
+      const [first] = set;
+      return set.size === 1 && first === this.turn;
+    });
+    return win;
+  }
+  roomEmit(event, payload = {}) {
+    this.io.in(String(this.room.id)).emit(event, payload);
   }
   listen() {
-    this.socket.on("changeTile", (changedTile) => {
-      this.changeTile(changedTile);
-    });
-    this.socket.on("toggleTurn", () => {
-      this.toggleTurn();
+    this.sockets.forEach((socket) => {
+      socket.on("changeTurn", () => {
+        this.changeTurn();
+      });
+      socket.on("changeBoard", (index) => {
+        this.changeTile(index);
+        if (this.checkWinCon()) {
+          this.roomEmit("message", { msg: `Game over ${this.turn} won!` });
+          this.restartGame();
+        }
+      });
     });
   }
   on() {
+    this.shufflePlayersToSymbols();
     this.listen();
-    this.shuffleSymbols();
+    this.allowChat();
   }
 }
 

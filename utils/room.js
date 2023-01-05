@@ -16,6 +16,9 @@ class Room {
   get isFull() {
     return this.players.length === 2;
   }
+  get isEmpty() {
+    return this.players.length === 0;
+  }
   set players(players) {
     this._players = players;
   }

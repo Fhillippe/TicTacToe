@@ -6,6 +6,9 @@ class Player {
     this._name = "";
     this._socket = socket;
   }
+  get room() {
+    return this._room;
+  }
   get socket() {
     return this._socket;
   }
@@ -23,6 +26,11 @@ class Player {
   }
   set room(room) {
     this._room = room;
+  }
+  listen() {
+    this.socket.on("setName", (name) => {
+      this.name = name;
+    });
   }
 }
 

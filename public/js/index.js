@@ -1,7 +1,6 @@
 const boardDom = document.querySelector("#board");
 const nameInput = document.querySelector("#nameInputField");
 const nameSubmit = document.querySelector("#namSubmit");
-const socket = io();
 let inRoom = false,
   game;
 
@@ -24,7 +23,6 @@ socket.on("renderOverview", (overview) => {
 socket.on("welcome", (overview) => {
   if (!inRoom) {
     helpers.outputMessage("Hello, please choose your name in order to play.");
-    helpers.socket = socket;
     helpers.renderOverwiev(overview);
   }
 });
@@ -36,7 +34,7 @@ socket.on("roomIsFull", () => {
 socket.on("enterRoom", (roomId) => {
   inRoom = true;
   helpers.hideOverview();
-  game = new Game(socket, boardDom, roomId);
+  game = new Game(boardDom, roomId);
   game.enterRoom();
 });
 

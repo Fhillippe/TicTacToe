@@ -1,0 +1,1 @@
+class BotGame extends Game {}

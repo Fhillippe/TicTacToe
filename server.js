@@ -18,6 +18,7 @@ app.use(express.static("public"));
 
 io.on("connection", (socket) => {
   const player = new Player(socket);
+  player.listen();
   socket.emit("welcome", rooms.overview);
   socket.on("joinRoom", (roomId) => {
     if (!player.name) {
@@ -32,13 +33,14 @@ io.on("connection", (socket) => {
       game.on();
     }
   });
-  socket.on("setName", (name) => {
-    player.name = name;
+  socket.on("sendMessage", (msg) => {
+    console.log(msg);
+    io.in(player.room).emit("message", { msg, author: player.name });
   });
   socket.on("disconnect", () => {
-    if (player.roomId) {
-      rooms.removePlayer(player.roomId, player.id);
-      socket.leave(player.roomId);
+    if (player.room) {
+      rooms.removePlayer(player.room, player.id);
+      socket.leave(player.room);
     }
   });
 });

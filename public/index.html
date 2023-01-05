@@ -13,10 +13,20 @@
     </div>
     <div id="board" style="display: none"></div>
     <div id="overview"></div>
-    <div id="messageBox"></div>
+    <div id="chatBox">
+      <div id="chatArea"></div>
+      <form id="chatForm">
+        <input id="chatFormText" type="text" maxlength="100" disabled />
+        <input id="chatFormSubmit" type="submit" disabled />
+      </form>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io();
+    </script>
     <script src="./js/utils/helpers.js"></script>
     <script src="./js/game/game.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
+    <script src="./js/chat/chat.js"></script>
     <script src="./js/index.js"></script>
   </body>
 </html>
