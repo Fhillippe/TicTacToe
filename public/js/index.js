@@ -1,29 +1,17 @@
 const boardDom = document.querySelector("#board");
-const nameInput = document.querySelector("#nameInputField");
-const nameSubmit = document.querySelector("#namSubmit");
 let inRoom = false,
   game;
 
-nameSubmit.addEventListener("click", () => {
-  const name = nameInput.value;
-  if (name) {
-    socket.emit("setName", name);
-    helpers.displayName(name);
-  } else {
-    helpers.outputMessage("Empty name.");
-  }
-});
-
-socket.on("renderOverview", (overview) => {
+socket.on("renderOverview", (newOverview) => {
   if (!inRoom) {
-    helpers.renderOverwiev(overview);
+    overview.renderOverview(newOverview);
   }
 });
 
-socket.on("welcome", (overview) => {
+socket.on("welcome", (newOverview) => {
   if (!inRoom) {
     helpers.outputMessage("Hello, please choose your name in order to play.");
-    helpers.renderOverwiev(overview);
+    overview.renderOverview(newOverview);
   }
 });
 
@@ -33,7 +21,7 @@ socket.on("roomIsFull", () => {
 
 socket.on("enterRoom", (roomId) => {
   inRoom = true;
-  helpers.hideOverview();
+  overview.hideOverview();
   game = new Game(boardDom, roomId);
   game.enterRoom();
 });

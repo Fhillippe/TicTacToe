@@ -25,9 +25,7 @@ class Rooms {
   }
   removePlayer(roomId, playerId) {
     this.rooms[roomId].removePlayer(playerId);
-    if (this.rooms[roomId].isEmpty) {
-      this._rooms[roomId] = new Room(roomId);
-    }
+    this._rooms[roomId] = new Room(roomId);
   }
   getRoom(roomId) {
     return this.rooms[roomId];

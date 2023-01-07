@@ -40,7 +40,17 @@ class Game {
       this.boardDom.appendChild(tile);
     }
   }
+  leaveGame() {
+    helpers.outputMessage(
+      "Second player has left the room, returning you to the lobby."
+    );
+    this.boardDom.style.display = "none";
+    overview.renderOverview();
+  }
+  addLeaveButton() {}
+  removeLeaveButton() {}
   showBoard() {
+    helpers.clearElement(this.boardDom);
     this.boardDom.style.display = "grid";
   }
   changeBoard(index, element) {
@@ -48,7 +58,6 @@ class Game {
     element.classList.add(this.symbol);
     socket.emit("changeBoard", index);
     socket.emit("changeTurn");
-    this.toggleTurn();
   }
   updateBoard(index) {
     const tile = document.querySelector(`.p${index}`);
@@ -67,15 +76,20 @@ class Game {
   enterRoom() {
     this.showBoard();
     this.addTiles();
+    this.showScore();
   }
-  allowChat() {
-    document
-      .querySelectorAll("#chatFormText, #chatFormSubmit")
-      .forEach((node) => (node.disabled = false));
+  showScore() {
+    const scoreBoard = document.querySelector("#scoreBoard");
+    scoreBoard.style.display = "flex";
+  }
+  addPoint() {
+    const scoreDom = document.querySelector(`.${this.turn}Score`);
+    const score = Number(scoreDom.innerHTML);
+    scoreDom.innerHTML = score + 1;
   }
   restartGame() {
+    this.addPoint();
     const tiles = document.querySelectorAll(".boardTile");
-    console.log(tiles);
     tiles.forEach((tile) => {
       if (!tile.classList.contains("active")) {
         tile.classList.add("active");
@@ -86,24 +100,28 @@ class Game {
   }
 
   listen() {
+    socket.on("leaveGame", () => {
+      this.leaveGame();
+    });
     socket.on("toggleTurn", () => {
       this.toggleTurn();
     });
     socket.on("updateBoard", (index) => {
       this.updateBoard(index);
     });
-    socket.on("allowChat", () => {
-      this.allowChat();
-    });
     socket.on("restartGame", () => {
       this.restartGame();
     });
+  }
+  turOnChat() {
+    document.querySelector("#chatForm").style.display = "block";
   }
   on(symbol) {
     this.symbol = symbol.toLowerCase();
     this.allowMoves();
     const message = helpers.getGameOpenMsg(symbol);
     helpers.outputMessage(message);
+    this.turOnChat();
     this.listen();
   }
 }

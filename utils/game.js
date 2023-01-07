@@ -52,11 +52,10 @@ class Game {
   changeTurn() {
     if (this.turn === "Circle") {
       this.turn = "Cross";
-      this.playerCross.socket.emit("toggleTurn");
     } else {
       this.turn = "Circle";
-      this.playerCircle.socket.emit("toggleTurn");
     }
+    this.roomEmit("toggleTurn");
   }
   coinFlip() {
     return Math.random() < 0.5;
@@ -68,7 +67,7 @@ class Game {
   setSockets() {
     this.sockets = [this.playerCircle.socket, this.playerCross.socket];
   }
-  shufflePlayersToSymbols() {
+  shufflePlayers() {
     const flipResult = this.coinFlip();
     this.setPlayers(flipResult);
     this.setSockets();
@@ -79,13 +78,10 @@ class Game {
     this.io.in(String(this.room.id)).emit("restartGame");
     this.board = [0, 0, 0, 0, 0, 0, 0, 0, 0];
   }
-  allowChat() {
-    this.io.in(String(this.room.id)).emit("allowChat");
-  }
   checkWinCon() {
-    const row1 = new Set(this.board.slice(0, 2));
-    const row2 = new Set(this.board.slice(3, 5));
-    const row3 = new Set(this.board.slice(6, 8));
+    const row1 = new Set(this.board.slice(0, 3));
+    const row2 = new Set(this.board.slice(3, 6));
+    const row3 = new Set(this.board.slice(6, 9));
     const column1 = new Set([this.board[0], this.board[3], this.board[6]]);
     const column2 = new Set([this.board[1], this.board[4], this.board[7]]);
     const column3 = new Set([this.board[2], this.board[5], this.board[8]]);
@@ -117,16 +113,15 @@ class Game {
       socket.on("changeBoard", (index) => {
         this.changeTile(index);
         if (this.checkWinCon()) {
-          this.roomEmit("message", { msg: `Game over ${this.turn} won!` });
+          this.roomEmit("message", { msg: `Round over ${this.turn} won!` });
           this.restartGame();
         }
       });
     });
   }
   on() {
-    this.shufflePlayersToSymbols();
+    this.shufflePlayers();
     this.listen();
-    this.allowChat();
   }
 }
 

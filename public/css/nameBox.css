@@ -1,0 +1,29 @@
+.name {
+  font-family: fantasy;
+  font-size: 2rem;
+}
+#nameBox {
+  box-shadow: 8px 8px 24px 0px rgba(66, 68, 90, 1);
+  justify-self: center;
+  height: fit-content;
+  padding: 1rem;
+  width: 70%;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media only screen and (max-width: 1050px) {
+  .name {
+    font-size: 3rem;
+  }
+}
+@media only screen and (max-width: 500px) {
+  #nameBox {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}

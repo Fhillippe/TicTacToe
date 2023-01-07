@@ -1,0 +1,16 @@
+#scoreBoard {
+  justify-content: space-between;
+  box-shadow: 8px 8px 24px 0px rgba(66, 68, 90, 1);
+  height: fit-content;
+  border-radius: 1rem;
+  margin: 1rem;
+}
+.scoreBox {
+  font-size: 1.5rem;
+  margin: 1rem;
+  text-align: center;
+  height: fit-content;
+}
+.score {
+  font-size: 5rem;
+}

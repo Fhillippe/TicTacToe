@@ -1,0 +1,30 @@
+#board {
+  grid-column-start: 2;
+  column-gap: 0.5rem;
+  row-gap: 0.5rem;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  background-color: black;
+  box-shadow: 8px 8px 24px 0px rgba(66, 68, 90, 1);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+.boardTile {
+  background-color: white;
+}
+
+.active:hover {
+  background-color: lightgray;
+}
+.cross,
+.circle {
+  background-size: 50%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.cross {
+  background-image: url("../imgs/cross.svg");
+}
+.circle {
+  background-image: url("../imgs/circle.svg");
+}

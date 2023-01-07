@@ -8,3 +8,9 @@ chatForm.addEventListener("submit", (e) => {
     chatText.value = "";
   }
 });
+chatText.addEventListener("focus", () => {
+  chatText.placeholder = "Write message...";
+});
+chatText.addEventListener("blur", () => {
+  chatText.placeholder = "Aa";
+});

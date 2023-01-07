@@ -14,85 +14,14 @@ body {
   padding: 1rem;
   grid-template: 5fr 1fr/ 1fr 2fr 1fr;
 }
-#board {
-  grid-column-start: 2;
-  column-gap: 0.5rem;
-  row-gap: 0.5rem;
-  display: grid;
-  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
-  background-color: black;
-}
-#overview {
-  display: grid;
-  grid-template: repeat(4, 1fr) / repeat(4, 1fr);
-  grid-column-start: 2;
-}
-.roomTile {
-  background-color: white;
-  border-radius: 2rem;
-  margin: 1rem;
-  text-align: center;
-  box-shadow: 8px 8px 24px 0px rgba(66, 68, 90, 1);
-  font-size: large;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.roomTile:hover {
-  box-shadow: 8px 8px 24px 0px rgb(0, 0, 0);
-}
-.roomTile:active {
-  border: 5px solid black;
-  background-color: lightskyblue;
-}
-.boardTile {
-  background-color: white;
-}
-.active:hover {
-  background-color: lightgray;
-}
-.cross,
-.circle {
-  background-size: 50%;
-  background-repeat: no-repeat;
-  background-position: center;
-}
-.cross {
-  background-image: url("../svg/cross.svg");
-}
-.circle {
-  background-image: url("../svg/circle.svg");
-}
-#chatBox {
-  grid-column-start: 2;
-  grid-row-start: 2;
-  background-color: white;
-}
-#chatArea {
-  height: 150px;
-  overflow-y: scroll;
-}
-#nameBox {
-  margin: auto;
-}
-.message {
-  border-bottom: 1px solid blue;
+p {
+  pointer-events: none;
 }
 @media only screen and (max-width: 1050px) {
   body {
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr 2fr 1fr;
-    margin-left: 10%;
-    margin-right: 10%;
-  }
-  #board,
-  #overview {
-    grid-column-start: 1;
-    grid-row-start: 2;
-  }
-  #chatBox {
-    grid-column-start: 1;
-    grid-row-start: 3;
+    grid-template-columns: 1fr 2fr;
+    margin-left: 0;
+    margin-right: 0;
   }
 }
 @media only screen and (max-width: 500px) {

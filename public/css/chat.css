@@ -1,0 +1,52 @@
+#chatBox {
+  grid-column-start: 2;
+  grid-row-start: 2;
+  background-color: white;
+  box-shadow: 8px 8px 24px 0px rgba(66, 68, 90, 1);
+  padding: 8px;
+  border-radius: 1rem;
+}
+#chatArea {
+  border-radius: 1rem;
+  height: 150px;
+  overflow-wrap: break-word;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+}
+#chatArea::-webkit-scrollbar {
+  width: 1rem;
+}
+#chatArea::-webkit-scrollbar-thumb {
+  background-color: rgb(53, 0, 243);
+  border-radius: 100vh;
+}
+.message {
+  border-radius: 1rem;
+  padding: 8px;
+  margin-bottom: 10px;
+  width: fit-content;
+  background-color: lightgray;
+}
+.message:last-child {
+  margin-bottom: 0;
+}
+.allignMessageRight {
+  align-self: flex-end;
+  background-color: rgb(95, 206, 206);
+}
+#chatForm {
+  width: fit-content;
+  margin-top: 0.5rem;
+  margin-right: 0;
+  margin-left: auto;
+}
+#chatFormText {
+  width: 200px;
+}
+#chatFormText:focus {
+  width: 350px;
+}
+.messageMeta {
+  font-weight: bold;
+}
