@@ -20,10 +20,8 @@
   .name {
     font-size: 3rem;
   }
-}
-@media only screen and (max-width: 500px) {
   #nameBox {
-    margin-left: 0;
-    margin-right: 0;
+    margin: auto;
+    width: fit-content;
   }
 }

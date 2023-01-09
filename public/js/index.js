@@ -1,4 +1,3 @@
-const boardDom = document.querySelector("#board");
 let inRoom = false,
   game;
 
@@ -14,18 +13,17 @@ socket.on("welcome", (newOverview) => {
     overview.renderOverview(newOverview);
   }
 });
-
-socket.on("roomIsFull", () => {
-  helpers.outputMessage("Room is full we can play");
-});
-
 socket.on("enterRoom", (roomId) => {
   inRoom = true;
   overview.hideOverview();
-  game = new Game(boardDom, roomId);
+  game = new Game(roomId);
   game.enterRoom();
 });
-
+socket.on("leaveGame", () => {
+  overview.showOverview();
+  game.closeGame();
+  inRoom = false;
+});
 socket.on("message", ({ msg, author }) => {
   helpers.outputMessage(msg, author);
 });

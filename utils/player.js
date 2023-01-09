@@ -1,5 +1,3 @@
-const names = [];
-
 class Player {
   constructor(socket) {
     this._id = socket.id;
@@ -29,17 +27,6 @@ class Player {
   set room(room) {
     this._room = room;
   }
-  listen() {
-    this.socket.on("tryName", (name) => {
-      if (!names.includes(name)) {
-        names.push(name);
-        this.name = name;
-        this.socket.emit("nameGood", name);
-      } else {
-        this.socket.emit("message", { msg: "Sorry name taken." });
-      }
-    });
-  }
 }
 
-module.exports = { Player, names };
+module.exports = { Player };

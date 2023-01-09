@@ -1,10 +1,9 @@
 class Game {
-  constructor(boardDom, roomId) {
-    this._boardDom = boardDom;
+  constructor(roomId) {
+    this._boardDom = document.querySelector("#board");
     this._roomId = roomId;
     this._turn = "circle";
     this._symbol = "";
-    this._chatBox = document.querySelector("#chatBox");
   }
   get symbol() {
     return this._symbol;
@@ -24,6 +23,9 @@ class Game {
   set symbol(symbol) {
     this._symbol = symbol;
   }
+  set boardDom(newBoardDom) {
+    this._boardDom = newBoardDom;
+  }
   get getOpposite() {
     return this.turn === "circle" ? "cross" : "circle";
   }
@@ -40,15 +42,36 @@ class Game {
       this.boardDom.appendChild(tile);
     }
   }
-  leaveGame() {
-    helpers.outputMessage(
-      "Second player has left the room, returning you to the lobby."
-    );
-    this.boardDom.style.display = "none";
-    overview.renderOverview();
+  hideResetScoreBoard() {
+    const scoreBoard = document.querySelector("#scoreBoard");
+    scoreBoard.style.display = "none";
+    const scores = document.querySelectorAll(".score");
+    scores.forEach((score) => {
+      score.innerHTML = "0";
+    });
   }
-  addLeaveButton() {}
-  removeLeaveButton() {}
+  closeGame() {
+    this.boardDom.style.display = "none";
+    this.removeLeaveButton();
+    this.hideResetScoreBoard();
+  }
+  addLeaveButton() {
+    const leaveButton = helpers.createDomElement(
+      "button",
+      ["leaveButton"],
+      ["Leave room"]
+    );
+    document.querySelector("body").appendChild(leaveButton);
+    leaveButton.addEventListener("click", () => {
+      helpers.outputMessage("Back in Lobby");
+      socket.emit("leaveRoom");
+    });
+  }
+  removeLeaveButton() {
+    document
+      .querySelector("body")
+      .removeChild(document.querySelector(".leaveButton"));
+  }
   showBoard() {
     helpers.clearElement(this.boardDom);
     this.boardDom.style.display = "grid";
@@ -75,6 +98,7 @@ class Game {
   }
   enterRoom() {
     this.showBoard();
+    this.addLeaveButton();
     this.addTiles();
     this.showScore();
   }
@@ -88,7 +112,6 @@ class Game {
     scoreDom.innerHTML = score + 1;
   }
   restartGame() {
-    this.addPoint();
     const tiles = document.querySelectorAll(".boardTile");
     tiles.forEach((tile) => {
       if (!tile.classList.contains("active")) {
@@ -96,12 +119,12 @@ class Game {
       }
       tile.classList.remove("cross");
       tile.classList.remove("circle");
+      tile.classList.remove("flashing");
     });
   }
-
   listen() {
-    socket.on("leaveGame", () => {
-      this.leaveGame();
+    socket.on("addPoint", () => {
+      this.addPoint();
     });
     socket.on("toggleTurn", () => {
       this.toggleTurn();
@@ -109,19 +132,17 @@ class Game {
     socket.on("updateBoard", (index) => {
       this.updateBoard(index);
     });
-    socket.on("restartGame", () => {
-      this.restartGame();
+    socket.on("restartGame", (highlight) => {
+      helpers.highlight(highlight).then(() => {
+        this.restartGame();
+      });
     });
-  }
-  turOnChat() {
-    document.querySelector("#chatForm").style.display = "block";
   }
   on(symbol) {
     this.symbol = symbol.toLowerCase();
     this.allowMoves();
     const message = helpers.getGameOpenMsg(symbol);
     helpers.outputMessage(message);
-    this.turOnChat();
     this.listen();
   }
 }

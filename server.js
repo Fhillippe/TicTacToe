@@ -2,7 +2,7 @@ const express = require("express");
 const http = require("http");
 const socketIo = require("socket.io");
 const Rooms = require("./utils/rooms");
-const { Player, names } = require("./utils/player");
+const { Player } = require("./utils/player");
 const Game = require("./utils/game");
 
 const PORT = 3000;
@@ -11,14 +11,27 @@ const server = http.createServer(app);
 io = socketIo(server);
 
 const rooms = new Rooms();
+let names = [];
 
 app.use(express.static("public"));
+
+app.get("/", (req, res) => {
+  res.send({ a: "huj" });
+});
 
 io.on("connection", (socket) => {
   socket.join("lobby");
   const player = new Player(socket);
-  player.listen();
   socket.emit("welcome", rooms.overview);
+  socket.on("tryName", (name) => {
+    if (!names.includes(name)) {
+      names.push(name);
+      player.name = name;
+      socket.emit("nameGood", name);
+    } else {
+      socket.emit("message", { msg: "Sorry name taken." });
+    }
+  });
   socket.on("joinRoom", (roomId) => {
     if (!player.name) {
       socket.emit("message", { msg: "You need name to join room." });
@@ -30,21 +43,31 @@ io.on("connection", (socket) => {
     socket.emit("enterRoom", roomId);
     io.emit("renderOverview", rooms.overview);
     if (rooms.getRoom(roomId).isFull) {
-      const game = new Game(rooms.getRoom(roomId), io, socket);
+      const game = new Game(rooms.getRoom(roomId), io, rooms);
       game.on();
     }
+  });
+  socket.on("leaveRoom", () => {
+    io.in(player.room).emit("leaveGame");
+    socket.leave(player.room);
+    socket.join("lobby");
+    rooms.resetRoom(player.room);
+    io.in(player.room).emit("message", {
+      msg: "Second player has left, returning you to the lobby.",
+    });
+    io.emit("renderOverview", rooms.overview);
   });
   socket.on("sendMessage", (msg) => {
     io.in(player.room).emit("message", { msg, author: player.name });
   });
   socket.on("disconnect", () => {
     if (player.room !== "lobby") {
-      rooms.removePlayer(player.room, player.id);
+      rooms.resetRoom(player.room);
       socket.leave(player.room);
       io.in(player.room).emit("leaveGame");
     }
     if (player.name) {
-      names.splice(player.name, 1);
+      names = names.filter((name) => name !== player.name);
     }
     io.emit("renderOverview", rooms.overview);
   });

@@ -23,8 +23,7 @@ class Rooms {
   get rooms() {
     return this._rooms;
   }
-  removePlayer(roomId, playerId) {
-    this.rooms[roomId].removePlayer(playerId);
+  resetRoom(roomId) {
     this._rooms[roomId] = new Room(roomId);
   }
   getRoom(roomId) {

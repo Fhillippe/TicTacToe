@@ -19,14 +19,11 @@ p {
 }
 @media only screen and (max-width: 1050px) {
   body {
-    grid-template-columns: 1fr 2fr;
+    display: block;
     margin-left: 0;
     margin-right: 0;
   }
-}
-@media only screen and (max-width: 500px) {
-  body {
-    margin-left: 0;
-    margin-right: 0;
+  * {
+    font-size: 30px;
   }
 }

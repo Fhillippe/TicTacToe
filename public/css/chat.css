@@ -18,7 +18,7 @@
   width: 1rem;
 }
 #chatArea::-webkit-scrollbar-thumb {
-  background-color: rgb(53, 0, 243);
+  background-color: rgb(55, 0, 255);
   border-radius: 100vh;
 }
 .message {
@@ -49,4 +49,25 @@
 }
 .messageMeta {
   font-weight: bold;
+}
+
+@media only screen and (max-width: 1050px) {
+  #chatBox {
+    height: 30vh;
+    margin: auto;
+    display: grid;
+    grid-template-rows: 3fr 1fr;
+  }
+  #chatArea {
+    height: auto;
+  }
+  #chatForm {
+    align-self: end;
+  }
+  .message {
+    height: 5vh;
+    width: 40vw;
+    margin: auto;
+    margin-top: 1rem;
+  }
 }

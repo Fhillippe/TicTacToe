@@ -1,5 +1,6 @@
 class Game {
-  constructor(room, io) {
+  constructor(room, io, rooms) {
+    this._rooms = rooms;
     this._room = room;
     this._playerCircle = "";
     this._playerCross = "";
@@ -10,6 +11,9 @@ class Game {
   }
   get board() {
     return this._board;
+  }
+  get rooms() {
+    return this._rooms;
   }
   get io() {
     return this._io;
@@ -74,31 +78,24 @@ class Game {
     this.playerCircle.socket.emit("startGame", "Circle");
     this.playerCross.socket.emit("startGame", "Cross");
   }
-  restartGame() {
-    this.io.in(String(this.room.id)).emit("restartGame");
+  restartGame(highlight) {
+    this.io.in(String(this.room.id)).emit("restartGame", highlight);
     this.board = [0, 0, 0, 0, 0, 0, 0, 0, 0];
   }
   checkWinCon() {
-    const row1 = new Set(this.board.slice(0, 3));
-    const row2 = new Set(this.board.slice(3, 6));
-    const row3 = new Set(this.board.slice(6, 9));
-    const column1 = new Set([this.board[0], this.board[3], this.board[6]]);
-    const column2 = new Set([this.board[1], this.board[4], this.board[7]]);
-    const column3 = new Set([this.board[2], this.board[5], this.board[8]]);
-    const cross1 = new Set([this.board[0], this.board[4], this.board[8]]);
-    const cross2 = new Set([this.board[2], this.board[4], this.board[6]]);
-    const win = [
-      row1,
-      row2,
-      row3,
-      column1,
-      column2,
-      column3,
-      cross1,
-      cross2,
-    ].find((set) => {
-      const [first] = set;
-      return set.size === 1 && first === this.turn;
+    const winLines = {
+      row0: new Set(this.board.slice(0, 3)),
+      row1: new Set(this.board.slice(3, 6)),
+      row2: new Set(this.board.slice(6, 9)),
+      column0: new Set([this.board[0], this.board[3], this.board[6]]),
+      column1: new Set([this.board[1], this.board[4], this.board[7]]),
+      column2: new Set([this.board[2], this.board[5], this.board[8]]),
+      cross0: new Set([this.board[0], this.board[4], this.board[8]]),
+      cross1: new Set([this.board[2], this.board[4], this.board[6]]),
+    };
+    const win = Object.keys(winLines).find((line) => {
+      const [first] = winLines[line];
+      return winLines[line].size === 1 && first === this.turn;
     });
     return win;
   }
@@ -112,9 +109,15 @@ class Game {
       });
       socket.on("changeBoard", (index) => {
         this.changeTile(index);
-        if (this.checkWinCon()) {
+        const win = this.checkWinCon();
+        if (win) {
           this.roomEmit("message", { msg: `Round over ${this.turn} won!` });
-          this.restartGame();
+          this.roomEmit("addPoint");
+          this.restartGame(win);
+        }
+        if (!this.board.includes(0)) {
+          this.roomEmit("message", { msg: "draw" });
+          this.restartGame("all");
         }
       });
     });

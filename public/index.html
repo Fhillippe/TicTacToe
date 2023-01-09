@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="css/styles.css" rel="stylesheet" />
-    <link href="css/board.css" rel="stylesheet" />
+    <link href="css/gameBoard.css" rel="stylesheet" />
     <link href="css/overview.css" rel="stylesheet" />
     <link href="css/nameBox.css" rel="stylesheet" />
     <link href="css/chat.css" rel="stylesheet" />
@@ -16,6 +16,16 @@
       <form id="nameForm">
         <input id="nameInputField" type="text" maxlength="10" />
       </form>
+    </div>
+    <div id="scoreBoard" style="display: none">
+      <div class="scoreBox">
+        <p>Circle score:</p>
+        <p class="score circleScore">0</p>
+      </div>
+      <div class="scoreBox">
+        <p>Cross score:</p>
+        <p class="score crossScore">0</p>
+      </div>
     </div>
     <div id="board" style="display: none"></div>
     <div id="overview"></div>
@@ -30,16 +40,6 @@
           disabled
         />
       </form>
-    </div>
-    <div id="scoreBoard" style="display: none">
-      <div class="scoreBox">
-        <p>Circle score:</p>
-        <p class="score circleScore">0</p>
-      </div>
-      <div class="scoreBox">
-        <p>Cross score:</p>
-        <p class="score crossScore">0</p>
-      </div>
     </div>
     <script src="/socket.io/socket.io.js"></script>
     <script>

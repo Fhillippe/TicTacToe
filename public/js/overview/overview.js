@@ -4,18 +4,22 @@ overviewDom.addEventListener("click", (e) => {
 });
 
 const overview = {
-  currentOverview: undefined,
   hideOverview() {
     overviewDom.style.display = "none";
   },
-  renderOverview(overview = this.currentOverview) {
+  showOverview() {
     overviewDom.style.display = "flex";
-    this.currentOverview = overview;
+  },
+  renderOverview(overview) {
+    overviewDom.style.display = "flex";
     helpers.clearElement(overviewDom);
     const tiles = this.createRoomTiles(overview);
     helpers.addTilesTo(overviewDom, tiles);
   },
-  handleJoinRoom(element = this.currentOverview) {
+  updateOverview(newOverview) {
+    newOverview.forEach(() => {});
+  },
+  handleJoinRoom(element) {
     if (element.classList.contains("roomTile")) {
       const roomId = element
         .querySelector(".roomTileId")
@@ -38,11 +42,7 @@ const overview = {
           ["roomTileAmountOfPlayers"],
           [`Players: ${numberOfPlayers}/2`]
         );
-        const joinRoom = helpers.createDomElement(
-          "p",
-          ["joinRoom"],
-          ["Click to Join"]
-        );
+        const joinRoom = helpers.createDomElement("p", ["joinRoom"], ["Enter"]);
         const div = helpers.createDomElement(
           "div",
           ["roomTile"],
