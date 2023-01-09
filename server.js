@@ -5,7 +5,7 @@ const Rooms = require("./utils/rooms");
 const { Player } = require("./utils/player");
 const Game = require("./utils/game");
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const app = express();
 const server = http.createServer(app);
 io = socketIo(server);
