@@ -7,6 +7,6 @@ Link to deployed website: https://tictactoeonline-z0yg.onrender.com<br>
  -You need to have a up to date node installed on pc<br>
  -clone repository<br>
  -open terminal inside repository<br>
- -run npm install//
+ -run npm install<br>
  -run npm start
 
